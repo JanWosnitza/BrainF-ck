@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Memory.fs" />
     <Compile Include="Interpreter.fs" />
     <Compile Include="Compiler.fs" />
     <Compile Include="Program.fs" />

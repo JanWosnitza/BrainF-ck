@@ -1,8 +1,5 @@
 ﻿module BrainFark.Interpreter
 
-open System
-open System.Text
-
 let run code =
     let rec skip count =
         function
@@ -16,50 +13,34 @@ let run code =
             | _ -> skip count cs
         | [] -> failwith "unmatched ["
 
-    let rec loop (left,current,right) stack =
+    let rec loop mem stack =
         function
-        | '>'::cs -> 
-            match right with
-            | [] -> loop (current::left, 0uy, []) stack cs
-            | r::rs -> loop (current::left, r, rs) stack cs
+        | '>'::cs -> loop (Memory.moveRight mem) stack cs
+        | '<'::cs -> loop (Memory.moveLeft mem) stack cs
 
-        | '<'::cs ->
-            match left with
-            | [] -> loop ([], 0uy, current::right) stack cs
-            | l::ls -> loop (ls, l, current::right) stack cs
+        | '+'::cs -> loop (Memory.increment mem) stack cs
+        | '-'::cs -> loop (Memory.decrement mem) stack cs
 
-        | '+'::cs ->
-            loop (left, current + 1uy, right) stack cs
-
-        | '-'::cs ->
-            loop (left, current - 1uy, right) stack cs
-
-        | '.'::cs ->
-            Console.Write( Encoding.ASCII.GetString( [|current|] ) )
-            loop (left, current, right) stack cs
-
-        | ','::cs ->
-            let i = Console.Read()
-            if i < -1 then failwith "aborted"
-            else loop (left, byte i, right) stack cs
+        | '.'::cs -> loop (Memory.write mem) stack cs
+        | ','::cs -> loop (Memory.read mem) stack cs
 
         | '['::cs ->
-            match current with
-            | 0uy -> loop (left, current, right) stack (skip 1 cs)
-            | _ -> loop (left, current, right) (cs::stack) cs
+            match Memory.get mem with
+            | 0uy -> loop mem stack (skip 1 cs)
+            | _ -> loop mem (cs::stack) cs
 
         | ']'::cs ->
             match stack with
             | s::ss ->
-                match current with
-                | 0uy -> loop (left, current, right) ss cs
-                | _ -> loop (left, current, right) stack s
+                match Memory.get mem with
+                | 0uy -> loop mem ss cs
+                | _ -> loop mem stack s
             | [] -> failwith "unmatched ["
 
-        | _::cs -> loop (left, current, right) stack cs
+        | _::cs -> loop mem stack cs
         | [] ->
             match stack with
             | s::ss -> failwith "unmatched ["
             | _ -> ()
     
-    loop ([], 0uy, []) [] code
+    loop Memory.Zero [] code
