@@ -21,7 +21,7 @@ let fromString (code:string) =
         | ']'::xs ->
             match fs with
             | f'::fs' -> loop fs' (f' >> loopIfNotZero f) xs
-            | [] -> failwith "unmatched ["
+            | [] -> failwith "unmatched ]"
 
         | _::xs -> loop fs f xs
         | [] ->
