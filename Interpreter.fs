@@ -1,6 +1,6 @@
 ﻿module BrainFark.Interpreter
 
-let run code =
+let fromString code =
     let rec skip count =
         function
         | c::cs ->
@@ -28,7 +28,6 @@ let run code =
             match Memory.get mem with
             | 0uy -> loop mem stack (skip 1 cs)
             | _ -> loop mem (cs::stack) cs
-
         | ']'::cs ->
             match stack with
             | s::ss ->
@@ -41,6 +40,8 @@ let run code =
         | [] ->
             match stack with
             | s::ss -> failwith "unmatched ["
-            | _ -> ()
+            | _ -> mem
     
-    loop Memory.Zero [] code
+    code
+    |> Seq.toList
+    |> (fun code mem -> loop mem [] code)

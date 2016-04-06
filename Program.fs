@@ -1,11 +1,17 @@
 ﻿module BrainFark.Program
 
-let HelloWorld = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
+open System.Diagnostics
+open Examples
 
-HelloWorld
-|> Seq.toList
-|> Interpreter.run
+let run f x =
+    let watch = Stopwatch.StartNew()
+    f x Memory.Zero |> ignore
+    printfn ""
+    printfn "%.1f msec" watch.Elapsed.TotalMilliseconds
 
-Compiler.Memory.Zero
-|> Compiler.fromString HelloWorld
-|> ignore
+
+printfn "Interpreter:"
+run Interpreter.fromString HelloWorldComplex
+
+printfn "Compiler:"
+run Compiler.fromString HelloWorldComplex
