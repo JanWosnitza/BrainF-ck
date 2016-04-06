@@ -6,5 +6,6 @@ HelloWorld
 |> Seq.toList
 |> Interpreter.run
 
-(HelloWorld
-|> Functional.fromString) Functional.Memory.Zero
+Compiler.Memory.Zero
+|> Compiler.fromString HelloWorld
+|> ignore

@@ -1,4 +1,4 @@
-﻿module BrainFark.Functional
+﻿module BrainFark.Compiler
 
 open System
 open System.Text
